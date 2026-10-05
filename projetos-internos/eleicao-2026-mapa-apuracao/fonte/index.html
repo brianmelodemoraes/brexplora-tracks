@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Mapa da Apuração</title>
+<style>
+@font-face{font-family:Jakarta;font-weight:700;src:url(plus-jakarta-sans-latin-700-normal.woff2)}
+@font-face{font-family:Jakarta;font-weight:800;src:url(plus-jakarta-sans-latin-800-normal.woff2)}
+@font-face{font-family:Serif;font-style:italic;src:url(instrument-serif-latin-400-italic.woff2)}
+@font-face{font-family:Inter;font-weight:400;src:url(inter-latin-400-normal.woff2)}
+@font-face{font-family:Inter;font-weight:500;src:url(inter-latin-500-normal.woff2)}
+@font-face{font-family:Inter;font-weight:600;src:url(inter-latin-600-normal.woff2)}
+:root{
+  --bg:#0b0f0d; --green:#3ddc6e; --green-deep:#1f9e48; --red:#ef3e3e; --red-deep:#b3202a;
+  --text:#ffffff; --muted:#a3aba7; --chip:#131815; --chip-b:#2a302d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+#story{position:relative;width:1080px;height:1920px;overflow:hidden;color:var(--text);font-family:Inter,sans-serif;
+  background:
+    radial-gradient(900px 620px at 50% -60px, rgba(34,120,62,.55), transparent 70%),
+    radial-gradient(700px 500px at 50% 1050px, rgba(30,90,50,.22), transparent 70%),
+    radial-gradient(800px 500px at 50% 2050px, rgba(30,80,45,.35), transparent 70%),
+    linear-gradient(#0d1a12 0, #0b0f0d 900px, #0b0f0d 100%);}
+.c{position:absolute;left:0;right:0;text-align:center}
+#logo{top:150px;height:118px;display:flex;justify-content:center}
+#logo img{height:118px}
+h1{top:300px;font-family:Jakarta;font-weight:800;font-size:92px;line-height:1.0;letter-spacing:-3.2px;padding:0 60px}
+h1 .p{margin-left:-6px}
+h1 em{font-family:Serif;font-style:italic;font-weight:400;letter-spacing:-1px;font-size:104px}
+#sub{top:520px;font-size:34px;line-height:1.35;color:var(--muted);padding:0 110px}
+#sub b{color:#fff;font-weight:600}
+#mapwrap{position:absolute;left:160px;top:636px;width:760px;height:792px}
+#mapwrap svg{width:100%;height:100%;overflow:visible}
+.st{stroke:#0b0f0d;stroke-width:1.1;stroke-linejoin:round}
+.lbl{font-family:Inter;font-weight:600;font-size:13px;fill:#fff;text-anchor:middle;dominant-baseline:central;
+  paint-order:stroke;stroke:rgba(0,0,0,.35);stroke-width:2.2px}
+.lead{stroke:rgba(255,255,255,.55);stroke-width:.8;fill:none}
+.tag{fill:#161c18;stroke:#2f3632;stroke-width:.8}
+#cards{position:absolute;left:90px;right:90px;top:1452px;display:flex;gap:24px}
+.card{flex:1;background:linear-gradient(180deg,#141a16,#101411);border:1.5px solid var(--chip-b);border-radius:28px;padding:26px 30px 28px;position:relative;overflow:hidden}
+.card .who{display:flex;align-items:center;gap:14px;font-family:Jakarta;font-weight:700;font-size:31px;letter-spacing:-.5px}
+.dot{width:20px;height:20px;border-radius:50%}
+.card .party{font-size:22px;color:var(--muted);margin-top:4px;margin-left:34px}
+.card .pct{font-family:Jakarta;font-weight:800;font-size:76px;letter-spacing:-2.5px;margin-top:10px;line-height:1}
+.card .pct small{font-size:44px;letter-spacing:-1px}
+.card .ufs{font-size:25px;color:#d7ddd9;margin-top:10px}
+.card .ufs b{font-weight:600}
+.bar{height:10px;border-radius:6px;background:#222824;margin-top:18px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px}
+.g .dot,.g .bar i{background:var(--green)} .g .pct{color:var(--green)}
+.r .dot,.r .bar i{background:var(--red)} .r .pct{color:var(--red)}
+.lead-badge{position:absolute;top:84px;right:28px;font-size:17px;font-weight:600;letter-spacing:.6px;color:#0b0f0d;background:var(--green);padding:6px 12px;border-radius:999px}
+#chips{top:1748px;display:flex;justify-content:center;gap:14px}
+.chip{background:var(--chip);border:1.5px solid var(--chip-b);border-radius:999px;padding:11px 20px;font-size:22px;color:#e6ebe8}
+.chip b{color:var(--green);font-weight:600}
+#foot{top:1832px;font-size:20px;color:#6f7873;letter-spacing:.3px}
+</style>
+</head>
+<body>
+<div id="story">
+  <div class="c" id="logo"><img src="logo.png" alt="Brexplora"></div>
+  <h1 class="c" id="h1">O Brasil da apuração<span class="p">,</span> <em>estado</em> por estado<span class="p">.</span></h1>
+  <p class="c" id="sub">Quem lidera em cada UF no <b>1º turno para presidente</b>, com 93,24% das urnas apuradas.</p>
+  <div id="mapwrap"><svg id="map"></svg></div>
+  <div id="cards">
+    <div class="card g" id="cg">
+      <span class="lead-badge">LIDERANDO</span>
+      <div class="who"><span class="dot"></span>Flávio Bolsonaro</div>
+      <div class="party">PL · 22</div>
+      <div class="pct" id="pg">47,79<small>%</small></div>
+      <div class="ufs">Na frente em <b id="ng">15</b> estados</div>
+      <div class="bar"><i id="bg"></i></div>
+    </div>
+    <div class="card r" id="cr">
+      <div class="who"><span class="dot"></span>Lula</div>
+      <div class="party">PT · 13</div>
+      <div class="pct" id="pr">44,26<small>%</small></div>
+      <div class="ufs">Na frente em <b id="nr">12</b> estados</div>
+      <div class="bar"><i id="br"></i></div>
+    </div>
+  </div>
+  <div class="c" id="chips">
+    <span class="chip"><b>93,24%</b> das urnas</span>
+    <span class="chip">Parcial das 20h46 · 04/out</span>
+    <span class="chip">Fonte: TSE via Poder360</span>
+  </div>
+  <div class="c" id="foot">Resultado parcial, sujeito a alteração · brexplora.com.br</div>
+</div>
+<script src="brazil.js"></script>
+<script>
+const LULA = ['am','pa','ap','ma','pi','ce','rn','pb','pe','al','se','ba'];
+const NS='http://www.w3.org/2000/svg';
+const svg=document.getElementById('map');
+svg.setAttribute('viewBox',BR.viewBox);
+const defs=document.createElementNS(NS,'defs');
+defs.innerHTML=`
+ <linearGradient id="gG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1f9e48"/><stop offset=".55" stop-color="#36d660"/><stop offset="1" stop-color="#6fe08f"/></linearGradient>
+ <linearGradient id="gR" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#b3202a"/><stop offset=".6" stop-color="#e8383c"/><stop offset="1" stop-color="#ff6a5c"/></linearGradient>
+ <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="14"/></filter>`;
+svg.appendChild(defs);
+const glowG=document.createElementNS(NS,'g'); glowG.setAttribute('filter','url(#glow)'); glowG.setAttribute('opacity','.35'); svg.appendChild(glowG);
+const statesG=document.createElementNS(NS,'g'); svg.appendChild(statesG);
+const labelsG=document.createElementNS(NS,'g'); svg.appendChild(labelsG);
+const S={};
+BR.locations.forEach(l=>{
+  const lula=LULA.includes(l.id);
+  const p=document.createElementNS(NS,'path'); p.setAttribute('d',l.path); p.setAttribute('class','st'); statesG.appendChild(p);
+  const gp=document.createElementNS(NS,'path'); gp.setAttribute('d',l.path); gp.setAttribute('fill',lula?'#e8383c':'#36d660'); gp.style.opacity=0; glowG.appendChild(gp);
+  S[l.id]={p,gp,lula,id:l.id};
+});
+// labels
+const ext={ // external callouts [x,y] in svg units
+  rn:[598,200], pb:[598,226], pe:[598,252], al:[598,278], se:[598,304],
+  es:[560,452], rj:[540,500], df:[330,388]
+};
+const nudge={go:[8,14], mg:[0,6], pa:[0,6], am:[0,10], ba:[-8,0], ma:[-4,8], pi:[0,6], sc:[4,0], rs:[4,0], ce:[0,-2], to:[0,6]};
+Object.values(S).forEach(s=>{
+  const b=s.p.getBBox(); let cx=b.x+b.width/2, cy=b.y+b.height/2;
+  const t=document.createElementNS(NS,'g');
+  if(ext[s.id]){
+    const [x,y]=ext[s.id];
+    // anchor point inside the state
+    const ax = s.id==='df'? cx : (s.id==='rn'? cx+6 : cx+4), ay = cy;
+    const ln=document.createElementNS(NS,'path'); ln.setAttribute('class','lead');
+    ln.setAttribute('d',`M${ax},${ay} L${x-16},${y}`); t.appendChild(ln);
+    const r=document.createElementNS(NS,'rect'); r.setAttribute('class','tag'); r.setAttribute('x',x-16); r.setAttribute('y',y-10); r.setAttribute('width',32); r.setAttribute('height',20); r.setAttribute('rx',6); t.appendChild(r);
+    const c=document.createElementNS(NS,'circle'); c.setAttribute('cx',ax); c.setAttribute('cy',ay); c.setAttribute('r',1.8); c.setAttribute('fill','#fff'); t.appendChild(c);
+    cx=x; cy=y;
+  } else if(nudge[s.id]){ cx+=nudge[s.id][0]; cy+=nudge[s.id][1]; }
+  const tx=document.createElementNS(NS,'text'); tx.setAttribute('class','lbl'); tx.setAttribute('x',cx); tx.setAttribute('y',cy+.5); tx.textContent=s.id.toUpperCase();
+  if(ext[s.id]){ tx.style.fontSize='11px'; tx.style.stroke='none'; tx.setAttribute('fill', s.lula?'#ff7b72':'#6fe08f'); }
+  t.appendChild(tx); labelsG.appendChild(t); s.label=t;
+  s.cy=b.y+b.height/2; s.cx=b.x+b.width/2;
+});
+// fill order: north -> south sweep (with a touch of west->east)
+const order=Object.values(S).sort((a,b)=>(a.cy*1+a.cx*.35)-(b.cy*1+b.cx*.35));
+order.forEach((s,i)=>s.i=i);
+
+// ---- animation ----
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const ease=x=>1-Math.pow(1-clamp(x),3);
+const easeBack=x=>{x=clamp(x);const c=1.6;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const mix=(a,b,k)=>a+(b-a)*k;
+function hexmix(c1,c2,k){const p=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));const A=p(c1),B=p(c2);return 'rgb('+A.map((v,i)=>Math.round(mix(v,B[i],k))).join(',')+')'}
+function fade(el,k,dy=30){el.style.opacity=k;el.style.transform=`translateY(${(1-k)*dy}px)`}
+const $=id=>document.getElementById(id);
+const fmt=v=>v.toFixed(2).replace('.',',');
+window.render=function(t){
+  fade($('logo'),ease(seg(t,0,.6)),-20);
+  fade($('h1'),ease(seg(t,.25,1.05)),50);
+  fade($('sub'),ease(seg(t,.6,1.3)),30);
+  const mk=ease(seg(t,.9,1.6));
+  $('mapwrap').style.opacity=mk; $('mapwrap').style.transform=`scale(${mix(.94,1,mk)})`;
+  const F0=1.6, step=.12; let ng=0,nr=0;
+  Object.values(S).forEach(s=>{
+    const k=seg(t,F0+s.i*step,F0+s.i*step+.45);
+    const base='#232a26';
+    s.p.setAttribute('fill', k>=1 ? (s.lula?'url(#gR)':'url(#gG)') : hexmix(base, s.lula?'#e8383c':'#36d660', ease(k)));
+    s.gp.style.opacity=ease(k);
+    const bb=easeBack(k); const sc=mix(1,1,0)+ (k>0&&k<1? Math.sin(Math.PI*k)*.06:0);
+    const b=s.p.getBBox(), cx=b.x+b.width/2, cy=b.y+b.height/2;
+    s.p.setAttribute('transform',`translate(${cx},${cy}) scale(${1+ (k>0&&k<1?Math.sin(Math.PI*k)*.05:0)}) translate(${-cx},${-cy})`);
+    s.label.style.opacity=ease(seg(t,F0+s.i*step+.2,F0+s.i*step+.6));
+    if(k>.5){ s.lula?nr++:ng++; }
+  });
+  const fillEnd=F0+26*step+.45;
+  // cards
+  fade($('cg'),ease(seg(t,2.0,2.7)),60); fade($('cr'),ease(seg(t,2.15,2.85)),60);
+  const pk=ease(seg(t,2.4,fillEnd));
+  $('pg').innerHTML=fmt(47.79*pk)+'<small>%</small>'; $('pr').innerHTML=fmt(44.26*pk)+'<small>%</small>';
+  $('ng').textContent=ng; $('nr').textContent=nr;
+  $('bg').style.width=(47.79*pk)+'%'; $('br').style.width=(44.26*pk)+'%';
+  const lb=document.querySelector('.lead-badge'); const lk=ease(seg(t,fillEnd,fillEnd+.4)); lb.style.opacity=lk; lb.style.transform=`scale(${mix(.7,1,easeBack(seg(t,fillEnd,fillEnd+.4)))})`;
+  fade($('chips'),ease(seg(t,fillEnd+.2,fillEnd+.8)),30);
+  fade($('foot'),ease(seg(t,fillEnd+.4,fillEnd+1)),20);
+};
+window.DURATION=10;
+render(new URLSearchParams(location.search).has('t')?parseFloat(new URLSearchParams(location.search).get('t')):99);
+</script>
+</body>
+</html>
